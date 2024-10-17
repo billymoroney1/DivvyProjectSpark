@@ -10,7 +10,27 @@ object App {
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder.appName("Divy Application").getOrCreate()
     val divyData = spark.read.option("inferSchema", "true").option("header", "true").csv("/Users/billy/Desktop/Divvy_Trips.csv")
-    divyData.show(5, false)
+//    val chicagoTraffic = spark.read.option("inferSchema", "true").option("header", "true").csv("/Users/billy/Desktop/chicago_traffic_congestion.csv")
+//    val scooterTrips = spark.read.option("inferSchema", "true").option("header", "true").csv("/Users/billy/Desktop/scooter_trips.csv")
+//    val vehicleCrashes = spark.read.option("inferSchema", "true").option("header", "true").csv("/Users/billy/Desktop/vehicle_crashes.csv")
+    println("====== Divy Data =====")
+//    divyData.show(5, false)
+    println("====== Scooter Data =====")
+//    scooterTrips.show(1, false)
+    println("====== Vehicle Crash Data =====")
+//    vehicleCrashes.show(20, false)
+    println("====== Traffic Data =====")
+//    chicagoTraffic.show(1, false)
+
+    // try and debug the db driver issue by setting up a debug configuration for spark-submit
+    // https://stackoverflow.com/questions/39885281/how-to-debug-a-scala-based-spark-program-on-intellij-idea
+
+    divyData.write
+      .format("jdbc")
+      .option("url", "postgresql://postgres:Whitman57!!@localhost:5432/DivvyTrafficSpark")
+      .option("dbtable", "DivyData")
+      .save()
+
     spark.stop()
   }
 }

@@ -3,12 +3,29 @@
  */
 package org.example
 
+import org.apache.sedona.spark.SedonaContext
+import org.apache.sedona.viz.core.Serde.SedonaVizKryoRegistrator
+import org.apache.sedona.viz.sql.utils.SedonaVizRegistrator
 import org.apache.spark.sql.SparkSession
 
 
 object App {
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder.appName("Divy Application").getOrCreate()
+    val spark = SparkSession.builder
+      .appName("Divy Application")
+      .getOrCreate()
+
+    val config = SedonaContext.builder()
+      .config("spark.kryo.registrator", classOf[SedonaVizKryoRegistrator].getName) // org.apache.sedona.viz.core.Serde.SedonaVizKryoRegistrator
+      .master("local[*]") // Delete this if run in cluster mode
+      .appName("Divy Application") // Change this to a proper name
+      .getOrCreate()
+
+    // next time im on try to follow this with a sample df and just try to get the sedona viz api to work:
+    //https://sedona.apache.org/1.5.1/tutorial/viz/
+
+    val sedona = SedonaContext.create(config)
+
     val divyData = spark.read.option("inferSchema", "true").option("header", "true").csv("/Users/billy/Desktop/Divvy_Trips.csv")
 //    val chicagoTraffic = spark.read.option("inferSchema", "true").option("header", "true").csv("/Users/billy/Desktop/chicago_traffic_congestion.csv")
 //    val scooterTrips = spark.read.option("inferSchema", "true").option("header", "true").csv("/Users/billy/Desktop/scooter_trips.csv")
@@ -27,7 +44,10 @@ object App {
 
     divyData.write
       .format("jdbc")
-      .option("url", "postgresql://postgres:Whitman57!!@localhost:5432/DivvyTrafficSpark")
+//      .option("url", "jdbc:postgresql://postgres:Whitman57!!@localhost:5432/DivvyTrafficSpark")
+      .option("url", "jdbc:postgresql://localhost:5432/DivvyTrafficSpark")
+      .option("user", "postgres")
+      .option("password", "Whitman57!!")
       .option("dbtable", "DivyData")
       .save()
 

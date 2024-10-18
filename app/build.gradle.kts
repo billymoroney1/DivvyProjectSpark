@@ -29,6 +29,14 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
 
+    implementation("org.postgresql:postgresql:42.7.4")
+    // https://mvnrepository.com/artifact/org.apache.sedona/sedona-sql-3.0
+    implementation("org.apache.sedona:sedona-sql-3.0_2.13:1.4.1")
+    // https://mvnrepository.com/artifact/org.apache.sedona/sedona-core-3.0
+    implementation("org.apache.sedona:sedona-core-3.0_2.13:1.4.1")
+    // https://mvnrepository.com/artifact/org.apache.sedona/sedona-viz-3.0
+    implementation("org.apache.sedona:sedona-viz-3.0_2.13:1.4.1")
+
     // Use Scalatest for testing our library
     testImplementation(libs.junit)
     testImplementation(libs.scalatest.v2.v13)
